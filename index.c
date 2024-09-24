@@ -138,35 +138,9 @@ int piece_selection(int confirmFlag)
     return playBoardOffset;
 }
 
-int calculate_possible_moves(
-    int pieceOffset,
-    char playboard[128],
-    char currentSide)
-{
-    char validMoves[95] = "";
-    int directionModifier = -1;
-    char selectedSide = playboard[pieceOffset];
+int calculate_possible_moves(int pieceOffset, char playboard[128],
+                            char validMoves[98]){
     char selectedType = playboard[pieceOffset + 1];
-    char copiedPlayboard[128];
-    int piecePlacementOnRow = pieceOffset % 16;
-    int pieceMovementToRight = 16 - piecePlacementOnRow;
-    int pieceMovementToLeft = 16 - pieceMovementToRight;
-    int pathBlocked = 0;
-    strncpy(copiedPlayboard, playboard, 128);
-
-    if ('b' == selectedSide)
-    {
-        directionModifier = 1;
-    }
-
-    // ensures the player is only moving pieces that belong to them
-    if (selectedSide != currentSide)
-    {
-        return INVALID_SELECTION;
-    }
-    // take the piece type (index 1)
-    // get valid moves for that piece type
-    // handle cases include Pawn
     switch (selectedType)
     {
     // xy
@@ -194,6 +168,29 @@ int calculate_possible_moves(
     default:
         return INVALID_SELECTION;
     }
+
+    return 0;
+
+}
+
+void decode_movement_pattern(int pieceOffset,
+                            char playboard[128],
+                            char validMoves[98],
+                            char copiedPlayboard[128],
+                            char currentSide){
+
+    char selectedSide = playboard[pieceOffset];
+    char selectedType = playboard[pieceOffset + 1];
+    int directionModifier = -1;
+    int piecePlacementOnRow = pieceOffset % 16;
+    int pieceMovementToRight = 16 - piecePlacementOnRow;
+    int pieceMovementToLeft = 16 - pieceMovementToRight;
+    int pathBlocked = 0;
+
+
+    if ('b' == selectedSide)
+        directionModifier = 1;
+
 
     // decode the movement pattern
     for (int i = 0; strlen(validMoves) >= i; i += 3)
@@ -267,11 +264,14 @@ int calculate_possible_moves(
             }
         }
     }
-    
-    print_game_board(copiedPlayboard);
 
-    int selectedMove = piece_selection(1);
-    return 0;
+}
+
+void switchSides(char currentSide){
+    if ('b' == currentSide)
+        currentSide = 'w';
+    else
+        currentSide = 'b';
 }
 
 int main(void)
@@ -296,17 +296,38 @@ int main(void)
 
         // handle forefeits
         if (FOREFEIT_CODE == selectedPiece)
-        {
             return 0;
+        if (playBoard[selectedPiece] != currentSide){
+            printf("Invalid piece choosen\n");
+            continue;
         }
 
-        // calculate possible moves & reprint the board
-        // if statement handles if the user selected an invalid piece
-        if (calculate_possible_moves(selectedPiece, playBoard, currentSide))
-        {
+
+        // calculate possible moves
+        // overrides validMoves inside of func
+        // returns 1 on failure
+        char validMoves[98] = "";
+        if (calculate_possible_moves(selectedPiece, playBoard, validMoves)){
             printf("Invalid selection, please try again\n");
             continue;
         }
+
+        char movementPlayboard[128] = "";
+        strncpy(movementPlayboard, playBoard, 128);
+
+        // stores a copied of the playboard with moves highlighted onto 
+        // copiedplayboard
+        // does weird math shit to decode the valid movement storage method
+        decode_movement_pattern(selectedPiece, playBoard, validMoves,
+                                movementPlayboard, currentSide);
+
+        print_game_board(movementPlayboard);
+
+        return 0;
+
+
+        // calculate possible moves & reprint the board
+        // if statement handles if the user selected an invalid piece
 
         // gather what piece the user wants to move to, and handle errors inside
 
@@ -314,14 +335,7 @@ int main(void)
         // update gameboard
 
         // switch the players each turn
-        if ('b' == currentSide)
-        {
-            currentSide = 'w';
-        }
-        else
-        {
-            currentSide = 'b';
-        }
+        switchSides(currentSide);
     } while (gameActive);
 
     return 0;
