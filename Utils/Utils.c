@@ -160,24 +160,17 @@ void decode_movement_pattern(int pieceOffset,
     if ('b' == selectedSide)
         directionModifier = 1;
 
-    printf("%s", validMoves);
-
     // begin looping through the components of the validMoves
     for (int MoveIndex = 0; MoveIndex <= strlen(validMoves); MoveIndex += 3){
         int xModifier = 1;
         int yModifier = 1;
 
-        printf("%d %c   - %d", (int)validMoves[MoveIndex], validMoves[MoveIndex], MoveIndex);
-
-
         if ('|' == validMoves[MoveIndex - 1]){
                         pathBlocked = 0;
                         printf("hit");
-
         }            
 
         if (',' == validMoves[MoveIndex]){
-
             MoveIndex++;
         }
 
@@ -187,9 +180,7 @@ void decode_movement_pattern(int pieceOffset,
             MoveIndex++;
             pathBlocked = 0;
             printf("hit");
-
         }
-        printf("\n");
 
         // determine if the first digit is negative
         if ('-' == validMoves[MoveIndex]){
