@@ -9,10 +9,10 @@ int letter_to_int(char letter[2]);
 int piece_selection(int confirmFlag);
 int calculate_possible_moves(int pieceOffset, 
                              char playboard[128],
-                             char validMoves[98]);
+                             char validMoves[205]);
 void decode_movement_pattern(int pieceOffset,
                             char playboard[128],
-                            char validMoves[98],
+                            char validMoves[205],
                             char copiedPlayboard[128],
                             char currentSide);
 void switch_sides(char* currentSide);

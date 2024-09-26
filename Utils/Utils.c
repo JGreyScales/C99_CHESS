@@ -126,7 +126,7 @@ int piece_selection(int confirmFlag)
 }
 
 int calculate_possible_moves(int pieceOffset, char playboard[128],
-                            char validMoves[98]){
+                            char validMoves[205]){
     char selectedType = playboard[pieceOffset + 1];
     switch (selectedType)
     {
@@ -134,22 +134,22 @@ int calculate_possible_moves(int pieceOffset, char playboard[128],
     // indicates a "path" segement
     // there is an issue with the negative values
     case 'k':
-        sprintf(validMoves, "%d,%s", 10, "01");
+        sprintf(validMoves, "|%d,|%s|,%s|,%s", 10, "01", "-10", "0-1");
         break;
     case 'q':
-        sprintf(validMoves, "|%d,%d,%d,%d,%d,%d,%d|,%d,%d,%d,%d,%d,%d,%d|,%s,%s,%s,%s,%s,%s,%s|,%d,%d,%d,%d,%d,%d,%d", 11, 22, 33, 44, 55, 66, 77, -11, -22, -33, -44, -55, -66, -77, "01", "02", "03", "04", "05", "06", "07", 10, 20, 30, 40, 50, 60, 70);
+        sprintf(validMoves, "|%d,%d,%d,%d,%d,%d,%d|,%d,%d,%d,%d,%d,%d,%d|,%s,%s,%s,%s,%s,%s,%s|,%d,%d,%d,%d,%d,%d,%d|,%s,%s,%s,%s,%s,%s,%s|,%s,%s,%s,%s,%s,%s,%s|,%s,%s,%s,%s,%s,%s,%s|,%s,%s,%s,%s,%s,%s,%s", 11, 22, 33, 44, 55, 66, 77, -11, -22, -33, -44, -55, -66, -77, "01", "02", "03", "04", "05", "06", "07", 10, 20, 30, 40, 50, 60, 70, "-1-1", "-2-2", "-3-3", "-4-4", "-5-5", "-6-6", "-7-7", "1-1", "2-2", "3-3", "4-4", "5-5", "6-6", "7-7", "0-1", "0-2", "0-3", "0-4", "0-5", "0-6", "0-7", "-10", "-20", "-30", "-40", "-50", "-60", "-70");
         break;
     case 'n':
-        sprintf(validMoves, "%s,%s,%s,%s", "-12", "12", "21", "2-1");
+        sprintf(validMoves, "|%s|,%s|,%s|,%s|%s|,%s|,%s|,%s", "-12", "12", "21", "2-1", "1-2", "-1-2", "-2-1", "-21");
         break;
     case 'b':
-        sprintf(validMoves, "|%d,%d,%d,%d,%d,%d,%d|,%d,%d,%d,%d,%d,%d,%d", 11, 22, 33, 44, 55, 66, 77, -11, -22, -33, -44, -55, -66, -77);
+        sprintf(validMoves, "|%d,%d,%d,%d,%d,%d,%d|,%d,%d,%d,%d,%d,%d,%d|,%s,%s,%s,%s,%s,%s,%s|,%s,%s,%s,%s,%s,%s,%s|", 11, 22, 33, 44, 55, 66, 77, -11, -22, -33, -44, -55, -66, -77, "-1-1", "-2-2", "-3-3", "-4-4", "-5-5", "-6-6", "-7-7", "1-1", "2-2", "3-3", "4-4", "5-5", "6-6", "7-7", "0-1", "0-2", "0-3", "0-4", "0-5", "0-6", "0-7");
         break;
     case 'r':
-        sprintf(validMoves, "|%s,%s,%s,%s,%s,%s,%s|,%d,%d,%d,%d,%d,%d,%d", "01", "02", "03", "04", "05", "06", "07", 10, 20, 30, 40, 50, 60, 70);
+        sprintf(validMoves, "|%s,%s,%s,%s,%s,%s,%s|,%s,%s,%s,%s,%s,%s,%s|%s,%s,%s,%s,%s,%s,%s|%s,%s,%s,%s,%s,%s,%s", "01", "02", "03", "04", "05", "06", "07", "10", "20", "30", "40", "50", "60", "70", "0-1", "0-2", "0-3", "0-4", "0-5", "0-6", "0-7", "-10", "-20", "-30", "-40", "-50", "-60", "-70");
         break;
     case 'p':
-        sprintf(validMoves, "%s", "01");
+        sprintf(validMoves, "|%s", "01");
         break;
     // ensures the player is not selecting an empty space
     default:
@@ -162,7 +162,7 @@ int calculate_possible_moves(int pieceOffset, char playboard[128],
 
 void decode_movement_pattern(int pieceOffset,
                             char playboard[128],
-                            char validMoves[98],
+                            char validMoves[205],
                             char copiedPlayboard[128],
                             char currentSide){
 
@@ -174,84 +174,92 @@ void decode_movement_pattern(int pieceOffset,
     int pieceMovementToLeft = 16 - pieceMovementToRight;
     int pathBlocked = 0;
 
-
+    // if playing as black
     if ('b' == selectedSide)
         directionModifier = 1;
 
+    printf("%s", validMoves);
 
-    // decode the movement pattern
-    for (int i = 0; strlen(validMoves) >= i; i += 3)
-    {
-
-        if ('|' == validMoves[i]){
-            pathBlocked = 0;
-        }
-
-        if (pathBlocked){
-            continue;
-        }
+    // begin looping through the components of the validMoves
+    for (int MoveIndex = 0; MoveIndex <= strlen(validMoves); MoveIndex += 3){
         int xModifier = 1;
         int yModifier = 1;
 
-        if ('-' == validMoves[i])
-        {
+        printf("%d %c   - %d", (int)validMoves[MoveIndex], validMoves[MoveIndex], MoveIndex);
+
+
+        if ('|' == validMoves[MoveIndex - 1]){
+                        pathBlocked = 0;
+                        printf("hit");
+
+        }            
+
+        if (',' == validMoves[MoveIndex]){
+
+            MoveIndex++;
+        }
+
+
+        //unblock the path each time we come across a new one
+        if ('|' == validMoves[MoveIndex]){
+            MoveIndex++;
+            pathBlocked = 0;
+            printf("hit");
+
+        }
+        printf("\n");
+
+        // determine if the first digit is negative
+        if ('-' == validMoves[MoveIndex]){
             xModifier = -1;
-            i++;
+            MoveIndex++;
         }
 
-        int x = ((int)validMoves[i] - ASCII_NUMBER_OFFSET) * xModifier;
+        // set the x value
+        int x = ((int)validMoves[MoveIndex] - ASCII_NUMBER_OFFSET) * xModifier;
 
-        if ('-' == validMoves[i + 1])
-        {
+
+        // determine if the second digit is negative
+        if ('-' == validMoves[MoveIndex + 1]){
             yModifier = -1;
-            i++;
+            MoveIndex++;
         }
 
+        // ensure pawn is moving in the right direction
+        if ('p' == selectedType && 'w' == currentSide)
+            yModifier = yModifier * -1;
 
-        int y = ((int)validMoves[i + 1] - ASCII_NUMBER_OFFSET) * yModifier;
+        int y = ((int)validMoves[MoveIndex + 1] - ASCII_NUMBER_OFFSET) * yModifier;
 
+        int selectedPiece = pieceOffset + (y * 16) + (x * 2);
 
-        for (int recursionModifier = -1;
-            recursionModifier <= 1;
-            recursionModifier += 2)
+        if (0 > selectedPiece || 128 < selectedPiece || pathBlocked ||
+        pieceOffset - pieceMovementToLeft > pieceOffset + (x * 2) || 
+        pieceOffset + pieceMovementToRight <= pieceOffset + (x * 2)){
+            continue;
+        }
+
+        if ('-' != playboard[selectedPiece]){
+            pathBlocked = 1;
+            if (currentSide == playboard[selectedPiece]){
+                continue;
+            }
+        }
+
+        if ('-' == copiedPlayboard[selectedPiece])
         {
-            // 16 chars per row
-            // tile length of 2
-            int selectedPiece = pieceOffset + (recursionModifier * (y * 16)) + (recursionModifier * (x * 2));
-            // handle off the board errors & side checking
-
-            if (0 > selectedPiece || 128 < selectedPiece ||
-            currentSide == playboard[selectedPiece] ||
-            // ensures the x values does not go over the side of the board left
-            pieceOffset - pieceMovementToLeft > pieceOffset + (recursionModifier * (x * 2)) ||
-            // ensures x values does not go over the side of the board right
-            pieceOffset + pieceMovementToRight <= pieceOffset + (recursionModifier * (x * 2))
-            )
-            {
-                // stops processing of other options along the path
-                pathBlocked = 1;
-                continue;
-            }
-
-            // prevents pawns from going backwards
-            if ('p' == selectedType && recursionModifier != directionModifier)
-            {
-                continue;
-            }
-
-            if ('-' == copiedPlayboard[selectedPiece])
-            {
-                copiedPlayboard[selectedPiece] = 'O';
-                copiedPlayboard[selectedPiece + 1] = 'O';
-            }
-            else
-            {
-                copiedPlayboard[selectedPiece] = copiedPlayboard[selectedPiece] - ASCII_CHAR_DIFFERENCE;
-                copiedPlayboard[selectedPiece + 1] = copiedPlayboard[selectedPiece + 1] - ASCII_CHAR_DIFFERENCE;
-            }
+            copiedPlayboard[selectedPiece] = 'O';
+            copiedPlayboard[selectedPiece + 1] = 'O';
         }
+        else
+        {
+            copiedPlayboard[selectedPiece] = copiedPlayboard[selectedPiece] - ASCII_CHAR_DIFFERENCE;
+            copiedPlayboard[selectedPiece + 1] = copiedPlayboard[selectedPiece + 1] - ASCII_CHAR_DIFFERENCE;
+        }
+
     }
 
+   return;
 }
 
 void switch_sides(char* currentSide){

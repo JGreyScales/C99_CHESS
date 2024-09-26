@@ -1,4 +1,5 @@
-// A terminal Based Chess game
+// A terminal Based Chess game, uses multiple lines.
+// Ensure that your terminal is large enough
 
 // GreyScales Sept 18th 2024
 #include <stdio.h>
@@ -16,8 +17,7 @@ int main(void)
     // total length 128
     // each tile is length of 2
     // each row is length of 16
-    // char playBoard[128] = "brbnbbbkbqbbbnbrbpbpbpbpbpbpbpbp----------------------------------------------------------------wpwpwpwpwpwpwpwpwrwnwbwqwkwbwnwr";
-    char playBoard[128] = "brbnbbbkbqbbbnbr------------------------------------------------------------------------------------------------wrwnwbwqwkwbwnwr";
+    char playBoard[128] = "brbnbbbkbqbbbnbrbpbpbpbpbpbpbpbp----------------------------------------------------------------wpwpwpwpwpwpwpwpwrwnwbwqwkwbwnwr";
 
 
     do
@@ -41,7 +41,7 @@ int main(void)
         // calculate possible moves
         // overrides validMoves inside of func
         // returns 1 on failure
-        char validMoves[98] = "";
+        char validMoves[205] = "";
         if (calculate_possible_moves(selectedPiece, playBoard, validMoves)){
             printf("Invalid selection, please try again\n");
             continue;
@@ -74,6 +74,7 @@ int main(void)
 
         // switch the players each turn
         switch_sides(&currentSide);
+        printf("\n\n\n\n");
     } while (gameActive);
 
     return 0;
