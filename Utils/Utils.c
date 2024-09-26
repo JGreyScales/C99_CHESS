@@ -14,9 +14,13 @@
 void print_game_board(char playBoard[128])
 {
 
+    //board is a 128 chars long
+    //each row is 16 chars
+    // prints y column
     printf("  a  b  c  d  e  f  g  h\n");
     for (int xOffset = 0; xOffset < 128; xOffset += 16)
     {
+        // prints x column
         printf("%d", (xOffset / 16) + 1);
         for (int x = 0; x < 16; x += 2)
         {
