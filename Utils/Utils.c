@@ -5,6 +5,8 @@
 // JGreyscales - Wed Sept 25, 2025
 
 #define ASCII_NUMBER_OFFSET     48
+#define ASCII_CAPITAL_OFFSET    64
+#define ASCII_LOWER_OFFSET      96
 #define FOREFEIT_CODE           129
 #define INVALID_SELECTION       1
 #define ASCII_CHAR_DIFFERENCE   32
@@ -27,41 +29,17 @@ void print_game_board(char playBoard[128])
 
 int letter_to_int(char letter[2])
 {
-    int x = 0;
-    switch (letter[0])
-    {
-    case 'a':
-    case 'A':
-        x = 1;
-        break;
-    case 'b':
-    case 'B':
-        x = 2;
-        break;
-    case 'c':
-    case 'C':
-        x = 3;
-        break;
-    case 'd':
-    case 'D':
-        x = 4;
-        break;
-    case 'e':
-    case 'E':
-        x = 5;
-        break;
-    case 'f':
-    case 'F':
-        x = 6;
-        break;
-    case 'g':
-    case 'G':
-        x = 7;
-        break;
-    case 'h':
-    case 'H':
-        x = 8;
-        break;
+    int x = (int)letter[0];
+
+    // if the ascii number is a capital letter
+    if (65 <= x && 90 >= x){
+        x -= ASCII_CAPITAL_OFFSET;
+
+    // lower case numbers
+    } else if (97 <= x && 122 >= x){
+        x -= ASCII_LOWER_OFFSET;
+    } else {
+        return 0;
     }
 
     return x;
